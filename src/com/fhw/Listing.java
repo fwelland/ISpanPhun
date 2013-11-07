@@ -5,10 +5,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.search.annotations.*;
+import org.infinispan.protostream.BaseMessage;
 
 @XmlRootElement(name="Listing")
 @Indexed
 public class Listing 
+    extends BaseMessage
     implements Serializable
 {
     @Field private Long listingId;     

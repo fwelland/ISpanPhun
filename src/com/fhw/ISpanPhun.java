@@ -1,11 +1,16 @@
 package com.fhw;
 
 import java.io.InputStream;
+import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+import org.infinispan.client.hotrod.Search; 
+import org.infinispan.client.hotrod.marshall.ProtoStreamMarshaller;
+import org.infinispan.query.dsl.QueryFactory ; 
+import org.infinispan.query.dsl.Query; 
 
 public class ISpanPhun
 {    
@@ -17,15 +22,15 @@ public class ISpanPhun
     
     public static void main(String[] args)
     {
-        String myargs[] = {"GET", "43971"};
-        
+        //String myargs[] = {"GET", "43971"};
+        String myargs[] = {"search", "foo"};        
         new ISpanPhun().go(myargs);         
     }    
         
     private void connect() 
     {
         ConfigurationBuilder builder = new ConfigurationBuilder();
-        builder.addServer().host("localhost").port(11222);
+        builder.addServer().host("localhost").port(11222).marshaller(new ProtoStreamMarshaller());
         cacheManager = new RemoteCacheManager(builder.build());
         cache = cacheManager.getCache("Listings", true);
     }
@@ -57,7 +62,7 @@ public class ISpanPhun
         }
         else if("search".equalsIgnoreCase(cmd))
         {
-            search();
+            search(args[1]);
         }
         else
         {
@@ -74,9 +79,15 @@ public class ISpanPhun
         System.err.println("search \"searchstring\"");        
     }
     
-    private void search()
+    private void search(String srchString)
     {
-        
+        QueryFactory qf =  Search.getQueryFactory(cache);         
+        Query q = qf.from(Listing.class).having("state").eq("NY").toBuilder().build();
+        List<Listing> results = q.list(); 
+        for(Listing l : results)
+        {
+            System.out.println(l); 
+        }
     }
     
     private void loadListings()
