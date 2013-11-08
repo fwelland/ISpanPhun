@@ -23,19 +23,33 @@ public class ISpanPhun
     public static void main(String[] args)
     {
         //String myargs[] = {"GET", "43971"};
-        String myargs[] = {"search", "foo"};        
-        new ISpanPhun().go(myargs);         
+        String myargs[] = {"search", "foo"};  
+        //String myargs[] = {"load"};  
+        
+        try
+        {
+            new ISpanPhun().go(myargs);         
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }    
         
     private void connect() 
+            throws Exception
     {
+        ClassLoader cl =  Thread.currentThread().getContextClassLoader();            
         ConfigurationBuilder builder = new ConfigurationBuilder();
         builder.addServer().host("localhost").port(11222).marshaller(new ProtoStreamMarshaller());
-        cacheManager = new RemoteCacheManager(builder.build());
+        cacheManager = new RemoteCacheManager(builder.build());       
+        ProtoStreamMarshaller.getSerializationContext(cacheManager).registerProtofile(cl.getResourceAsStream("com/fhw/Listing.protobin"));        
+        ProtoStreamMarshaller.getSerializationContext(cacheManager).registerMarshaller(Listing.class, new ListingMarshaller());                    
         cache = cacheManager.getCache("Listings", true);
     }
     
     private void go(String args[])
+        throws Exception
     {        
         String cmd = args[0];         
         connect(); 
@@ -91,22 +105,17 @@ public class ISpanPhun
     }
     
     private void loadListings()
+        throws Exception
     {
-        try
+        ClassLoader cl =  Thread.currentThread().getContextClassLoader();            
+        JAXBContext context = JAXBContext.newInstance(new Class[] {JAXBLoadableListing.class, Listings.class, ListingValue.class, ListingValueAddress.class});
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        InputStream is = cl.getResourceAsStream("com/fhw/Listings.xml");
+        Listings ls = (Listings)unmarshaller.unmarshal(is); 
+        for(JAXBLoadableListing l : ls.getListings())
         {
-            JAXBContext context = JAXBContext.newInstance(Listings.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("com/fhw/Listings.xml");
-            Listings ls = (Listings)unmarshaller.unmarshal(is); 
-            for(Listing l : ls.getListings())
-            {
-                l.initializeValues();
-                cache.put(l.getListingId(), l); 
-            }
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
+            Listing ll = l.makeListing();
+            cache.put(ll.getListingId(), ll); 
         }
     }
     
@@ -119,20 +128,7 @@ public class ISpanPhun
     public void disconnect()
     {
         cacheManager.stop();
-    }
-            
-    private void addListing(Long lid, String desc, String pType, String city, String state, String zip, Long price)
-    {
-        Listing l = new Listing().
-                setListingId(lid).
-                setTitle(desc).
-                setPropertyType(pType).
-                setCity(city).
-                setState(state).
-                setZip(zip).
-                setPrice(price);                   
-        cache.put(lid, l); 
-    }    
+    }            
 }
 
 

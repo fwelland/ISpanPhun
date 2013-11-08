@@ -1,0 +1,17 @@
+import "google/protobuf/descriptor.proto";
+option java_package = "com.fhw";
+option java_outer_classname = "Listing";
+
+message Listing
+{
+    option (IndexedEntity) = true;
+    required int64 listingId = 1;
+    optional string title = 2;
+    optional string propertyType = 3;
+    optional string city = 4;
+    optional string state = 5;
+    optional string zip = 6;
+    optional int64 price = 7; 
+}
+
+

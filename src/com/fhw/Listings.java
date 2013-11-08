@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="Listings")
 public class Listings 
 {
-    private List<Listing> listings; 
+    private List<JAXBLoadableListing> listings; 
     
     public Listings()
     {
@@ -16,15 +16,15 @@ public class Listings
     }
 
     @XmlElement(name="Listing")
-    public List<Listing> getListings()
+    public List<JAXBLoadableListing> getListings()
     {        
         if(null == listings)
-            listings = new ArrayList<Listing>(); 
+            listings = new ArrayList<JAXBLoadableListing>(); 
         
         return listings;
     }
 
-    public void setListings(List<Listing> listings)
+    public void setListings(List<JAXBLoadableListing> listings)
     {
         this.listings = listings;
     }

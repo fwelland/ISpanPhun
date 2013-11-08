@@ -1,8 +1,6 @@
 package com.fhw;
 import org.infinispan.protostream.MessageMarshaller;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ListingMarshaller 
     implements MessageMarshaller<Listing>
@@ -12,10 +10,14 @@ public class ListingMarshaller
     public Listing readFrom(ProtoStreamReader reader) throws IOException
     {
         Listing l = new Listing(); 
-        l.setListingId(reader.readLong("ListingId"));
+        l.setListingId(reader.readLong("listingId"));
         l.setTitle(reader.readString("title"));
-        l.setPropertyType(reader.readString("propertType")); 
-        l.
+        l.setPropertyType(reader.readString("propertyType")); 
+        l.setCity(reader.readString("city"));
+        l.setState(reader.readString("state"));
+        l.setZip(reader.readString("zip"));
+        l.setPrice(reader.readLong("price"));
+        return(l);
     }
 
     @Override
