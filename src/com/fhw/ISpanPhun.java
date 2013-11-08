@@ -2,8 +2,10 @@ package com.fhw;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
+import org.hibernate.search.cfg.SearchMapping;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
@@ -41,7 +43,12 @@ public class ISpanPhun
     {
         ClassLoader cl =  Thread.currentThread().getContextClassLoader();            
         ConfigurationBuilder builder = new ConfigurationBuilder();
-        builder.addServer().host("localhost").port(11222).marshaller(new ProtoStreamMarshaller());
+        
+        SearchMapping mapping = new SearchMapping(); 
+        mapping.entity(Listing.class);        
+        Properties props = new Properties(); 
+        props.put(org.hibernate.search.Environment.MODEL_MAPPING, mapping);
+        builder.addServer().host("localhost").port(11222).marshaller(new ProtoStreamMarshaller()).withProperties(props);
         cacheManager = new RemoteCacheManager(builder.build());       
         ProtoStreamMarshaller.getSerializationContext(cacheManager).registerProtofile(cl.getResourceAsStream("com/fhw/Listing.protobin"));        
         ProtoStreamMarshaller.getSerializationContext(cacheManager).registerMarshaller(Listing.class, new ListingMarshaller());                    
