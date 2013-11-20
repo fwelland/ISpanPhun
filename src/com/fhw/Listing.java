@@ -1,11 +1,11 @@
 package com.fhw;
 import java.io.Serializable;
 import org.hibernate.search.annotations.*;
-//import org.infinispan.protostream.BaseMessage;
+import org.infinispan.protostream.BaseMessage;
 
 @Indexed
 public class Listing 
-//    extends BaseMessage
+    extends BaseMessage
     implements Serializable
 {
     @Field private Long listingId;     

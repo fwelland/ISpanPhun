@@ -35,8 +35,8 @@ public class ISpanPhun
     public static void main(String[] args)
     {
         //String myargs[] = {"GET", "43971"};
-        String myargs[] = {"search", "foo"};  
-        //String myargs[] = {"load"};  
+        //String myargs[] = {"search", "foo"};  
+        String myargs[] = {"load"};  
         
         try
         {
