@@ -35,8 +35,8 @@ public class ISpanPhun
     public static void main(String[] args)
     {
         //String myargs[] = {"GET", "43971"};
-        //String myargs[] = {"search", "foo"};  
-        String myargs[] = {"load"};  
+        String myargs[] = {"search", "foo"};  
+        //String myargs[] = {"load"};  
         
         try
         {
@@ -83,11 +83,6 @@ public class ISpanPhun
         JMXServiceURL serviceURL = new JMXServiceURL(urlString);
         JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, null); 
         MBeanServerConnection mbs = jmxConnector.getMBeanServerConnection(); 
-//        for(String s : mbs.getDomains())
-//        {
-//            System.out.println("domain:  " +  s); 
-//        }        
-//        System.out.println("----------------------");   
         
         String otherMbeanName = "jboss.infinispan:type=RemoteQuery,name=\"local\",component=ProtobufMetadataManager";         
         System.out.println("locating:  " + otherMbeanName + " .....");
@@ -167,10 +162,10 @@ public class ISpanPhun
             Listing ll = l.makeListing();
             cache.put(ll.getListingId(), ll); 
             ii++;
-//            if((ii % 20) == 0)
-//            {
-//                System.out.println("done about " + ii  + " Listings");
-//            }                
+            if((ii % 20) == 0)
+            {
+                System.out.println("done about " + ii  + " Listings");
+            }                
         }
         System.out.println("loadded " + ii + " listings"); 
     }
